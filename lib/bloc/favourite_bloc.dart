@@ -1,10 +1,10 @@
-//events
+
 import 'package:rxdart/rxdart.dart';
 import 'package:test_app/models/book_model/book_model.dart';
 import 'package:test_app/models/book_model/book_response.dart';
 import 'package:test_app/models/favourite_model/favourite_response.dart';
 import 'package:test_app/repository/project_repo.dart';
-
+//events
 abstract class FavouriteEvents {}
 
 class FavouriteInitialEvent extends FavouriteEvents {}
