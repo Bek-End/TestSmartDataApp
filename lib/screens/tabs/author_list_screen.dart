@@ -24,58 +24,63 @@ class _AuthorListScreenState extends State<AuthorListScreen> {
     return StreamBuilder(
         stream: authorBloc.subject.stream,
         builder: (context, AsyncSnapshot<AuthorStates> snapshot) {
-          switch (snapshot.data.runtimeType) {
-            case AuthorInitialState:
-              AuthorInitialState authorInitialState = snapshot.data;
-              return StreamBuilder(
-                  stream: switchAuthorsBooksScreenBloc.subject.stream,
-                  initialData: switchAuthorsBooksScreenBloc.defaultScreen,
-                  builder: (context,
-                      AsyncSnapshot<AuthorsBooksScreenStates> snapshot) {
-                    switch (snapshot.data) {
-                      case AuthorsBooksScreenStates.AUTHORS_SCREEN_STATE:
-                        return Scaffold(
-                          appBar: AppBar(
-                            title: Text("Authors"),
-                            centerTitle: true,
-                          ),
-                          body: Container(
-                              height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width,
-                              padding:
-                                  EdgeInsets.only(left: 10, right: 10, top: 10),
-                              child: ListView(
-                                children: _buildLisTile(
-                                    authorInitialState.authorModel,
-                                    authorInitialState.bookModel),
-                              )),
-                        );
-                        break;
-                      case AuthorsBooksScreenStates.AUTHORS_BOOKS_SCREEN_STATE:
-                        return AuthorsBooksScreen();
-                        break;
-                      default:
-                        return buildLoadingWidget();
-                        break;
-                    }
-                  });
-              break;
-            case AuthorLoadingState:
-              return Scaffold(
+          if (snapshot.hasData) {
+            switch (snapshot.data.runtimeType) {
+              case AuthorInitialState:
+                AuthorInitialState authorInitialState = snapshot.data;
+                return StreamBuilder(
+                    stream: switchAuthorsBooksScreenBloc.subject.stream,
+                    initialData: switchAuthorsBooksScreenBloc.defaultScreen,
+                    builder: (context,
+                        AsyncSnapshot<AuthorsBooksScreenStates> snapshot) {
+                      switch (snapshot.data) {
+                        case AuthorsBooksScreenStates.AUTHORS_SCREEN_STATE:
+                          return Scaffold(
+                            appBar: AppBar(
+                              title: Text("Authors"),
+                              centerTitle: true,
+                            ),
+                            body: Container(
+                                height: MediaQuery.of(context).size.height,
+                                width: MediaQuery.of(context).size.width,
+                                padding: EdgeInsets.only(
+                                    left: 10, right: 10, top: 10),
+                                child: ListView(
+                                  children: _buildLisTile(
+                                      authorInitialState.authorModel,
+                                      authorInitialState.bookModel),
+                                )),
+                          );
+                          break;
+                        case AuthorsBooksScreenStates
+                            .AUTHORS_BOOKS_SCREEN_STATE:
+                          return AuthorsBooksScreen();
+                      }
+                    });
+                break;
+              case AuthorErrorState:
+                return Scaffold(
                   appBar: AppBar(title: Text("Authors"), centerTitle: true),
-                  body: Center(child: buildLoadingWidget()));
-              break;
-            case AuthorErrorState:
-              return Scaffold(
+                  body: Center(
+                    child: Text("Error"),
+                  ),
+                );
+                break;
+              default:
+                return Container();
+                break;
+            }
+          } else if (snapshot.hasError) {
+            return Scaffold(
+              appBar: AppBar(title: Text("Authors"), centerTitle: true),
+              body: Center(
+                child: Text("Error"),
+              ),
+            );
+          } else {
+            return Scaffold(
                 appBar: AppBar(title: Text("Authors"), centerTitle: true),
-                body: Center(
-                  child: Text("Error"),
-                ),
-              );
-              break;
-            default:
-              return Container();
-              break;
+                body: Center(child: buildLoadingWidget()));
           }
         });
   }

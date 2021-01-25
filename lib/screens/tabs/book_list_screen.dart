@@ -26,43 +26,44 @@ class _BookListScreenState extends State<BookListScreen> {
       ),
       body: StreamBuilder(
           stream: booksBloc.subject.stream,
-          initialData: booksBloc.defaultState,
           // ignore: missing_return
           builder: (context, AsyncSnapshot<BooksStates> snapshot) {
-            BooksInitialState booksInitialState;
-            switch (snapshot.data.runtimeType) {
-              case BooksInitialState:
-                booksInitialState = snapshot.data;
-                return Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-                  child: ListView(
-                    children: _buildLisTile(
-                        booksInitialState.books, booksInitialState.favBooks),
-                  ),
-                );
+            if (snapshot.hasData) {
+              BooksInitialState booksInitialState;
+              switch (snapshot.data.runtimeType) {
+                case BooksInitialState:
+                  booksInitialState = snapshot.data;
+                  return Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                    child: ListView(
+                      children: _buildLisTile(
+                          booksInitialState.books, booksInitialState.favBooks),
+                    ),
+                  );
 
-              case BooksAddToFavsState:
-                BooksAddToFavsState booksAddToFavsState = snapshot.data;
-                return Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(
-                    left: 10,
-                    right: 10,
-                  ),
-                  child: ListView(
-                    children: _buildLisTile(booksAddToFavsState.books,
-                        booksAddToFavsState.favBooks),
-                  ),
-                );
-
-              case BooksLoadingState:
-                return Center(child: buildLoadingWidget());
-
-              case BooksErrorState:
-                return Center(child: Text("Error"));
+                case BooksAddToFavsState:
+                  BooksAddToFavsState booksAddToFavsState = snapshot.data;
+                  return Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.only(
+                      left: 10,
+                      right: 10,
+                    ),
+                    child: ListView(
+                      children: _buildLisTile(booksAddToFavsState.books,
+                          booksAddToFavsState.favBooks),
+                    ),
+                  );
+                case BooksErrorState:
+                  return Center(child: Text("Error"));
+              }
+            }else if(snapshot.hasError){
+              return Center(child: Text("Error"));
+            }else{
+              return Center(child: buildLoadingWidget());
             }
           }),
     );

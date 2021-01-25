@@ -27,39 +27,44 @@ class _FavouriteBooksListScreenState extends State<FavouriteBooksListScreen> {
       ),
       body: StreamBuilder(
         stream: favouriteBloc.subject.stream,
-        initialData: favouriteBloc.defaultState,
         builder:
             // ignore: missing_return
             (BuildContext context, AsyncSnapshot<FavouriteStates> snapshot) {
-          switch (snapshot.data.runtimeType) {
-            case FavouriteInitialState:
-              FavouriteInitialState favouriteInitialState = snapshot.data;
-              return Container(
-                height: MediaQuery.of(context).size.height - 20,
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.all(10),
-                child: ListView(
-                    children: _buildLisTile(favouriteInitialState.favBooks)),
-              );
-              break;
-            case FavouriteRemoveState:
-              FavouriteRemoveState favouriteRemoveState = snapshot.data;
-              return Container(
-                height: MediaQuery.of(context).size.height - 20,
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.all(10),
-                child: ListView(
-                    children: _buildLisTile(favouriteRemoveState.favBooks)),
-              );
-              break;
-            case FavouriteLoadingState:
-              return Center(
-                child: buildLoadingWidget(),
-              );
-            case FavouriteErrorState:
-              return Center(
-                child: Text("Error"),
-              );
+          if (snapshot.hasData) {
+            switch (snapshot.data.runtimeType) {
+              case FavouriteInitialState:
+                FavouriteInitialState favouriteInitialState = snapshot.data;
+                return Container(
+                  height: MediaQuery.of(context).size.height - 20,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.all(10),
+                  child: ListView(
+                      children: _buildLisTile(favouriteInitialState.favBooks)),
+                );
+                break;
+              case FavouriteRemoveState:
+                FavouriteRemoveState favouriteRemoveState = snapshot.data;
+                return Container(
+                  height: MediaQuery.of(context).size.height - 20,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.all(10),
+                  child: ListView(
+                      children: _buildLisTile(favouriteRemoveState.favBooks)),
+                );
+                break;
+              case FavouriteErrorState:
+                return Center(
+                  child: Text("Error"),
+                );
+            }
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text("Error"),
+            );
+          } else {
+            return Center(
+              child: buildLoadingWidget(),
+            );
           }
         },
       ),
@@ -95,8 +100,8 @@ class _FavouriteBooksListScreenState extends State<FavouriteBooksListScreen> {
                 caption: "Delete",
                 color: Colors.red,
                 icon: EvaIcons.minusCircleOutline,
-                onTap: () => favouriteBloc
-                    .mapEventToState(FavouriteRemoveEvent(bookId: favBooks[i].id)),
+                onTap: () => favouriteBloc.mapEventToState(
+                    FavouriteRemoveEvent(bookId: favBooks[i].id)),
               ),
             )
           ],

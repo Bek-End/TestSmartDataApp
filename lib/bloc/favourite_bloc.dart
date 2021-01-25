@@ -27,8 +27,6 @@ class FavouriteRemoveState extends FavouriteStates {
   FavouriteRemoveState({this.favBooks});
 }
 
-class FavouriteLoadingState extends FavouriteStates {}
-
 class FavouriteErrorState extends FavouriteStates {}
 
 //bloc
@@ -37,18 +35,14 @@ class FavouriteBloc {
       BehaviorSubject<FavouriteStates>();
   BehaviorSubject<FavouriteStates> get subject => _subject;
 
-  FavouriteStates defaultState = FavouriteLoadingState();
-
   void mapEventToState(FavouriteEvents event) async {
     switch (event.runtimeType) {
       case FavouriteInitialEvent:
-        _subject.sink.add(FavouriteLoadingState());
         BookResponse favouriteResponse = await projectRepo.getFavBooks();
         _subject.sink.add(
             FavouriteInitialState(favBooks: favouriteResponse.bookModel.data));
         break;
       case FavouriteRemoveEvent:
-        _subject.sink.add(FavouriteLoadingState());
         FavouriteRemoveEvent removeEvent = event;
         FavouriteResponse favouriteResponse =
             await projectRepo.removeFromFavs(removeEvent.bookId);

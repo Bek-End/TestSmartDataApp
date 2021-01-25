@@ -16,31 +16,33 @@ class _AuthorsBooksScreenState extends State<AuthorsBooksScreen> {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: authorsBooksBloc.subject.stream,
-      initialData: authorsBooksBloc.defaultAuthorsBooksState,
       builder:
           // ignore: missing_return
           (BuildContext context, AsyncSnapshot<AuthorsBooksStates> snapshot) {
-        switch (snapshot.data.runtimeType) {
-          case AuthorsBooksInitialState:
-            AuthorsBooksInitialState authorsBooksInitialState = snapshot.data;
-            return scaffold(
-                context: context,
-                child: ListView(
-                  children: _buildSwipableListTile(
-                      authorsBooksInitialState.book,
-                      authorsBooksInitialState.favBooks),
-                ));
-
-          case AuthorsBooksLoadingState:
-            return Center(
-              child: buildLoadingWidget(),
-            );
-
-          case AuthorsBooksErrorState:
-            return Center(
-              child: Text("Error"),
-            );
-
+        if (snapshot.hasData) {
+          switch (snapshot.data.runtimeType) {
+            case AuthorsBooksInitialState:
+              AuthorsBooksInitialState authorsBooksInitialState = snapshot.data;
+              return scaffold(
+                  context: context,
+                  child: ListView(
+                    children: _buildSwipableListTile(
+                        authorsBooksInitialState.book,
+                        authorsBooksInitialState.favBooks),
+                  ));
+            case AuthorsBooksErrorState:
+              return Center(
+                child: Text("Error"),
+              );
+          }
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text("Error"),
+          );
+        } else {
+          return Center(
+            child: buildLoadingWidget(),
+          );
         }
       },
     );

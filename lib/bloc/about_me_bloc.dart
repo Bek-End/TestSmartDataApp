@@ -15,8 +15,6 @@ class AboutMeInitialState extends AboutMeStates {
   AboutMeInitialState({this.aboutMeModel});
 }
 
-class AboutMeLoadingState extends AboutMeStates {}
-
 class AboutMeErrorState extends AboutMeStates {}
 
 //bloc
@@ -24,19 +22,15 @@ class AboutMeBloc {
   BehaviorSubject<AboutMeStates> _subject = BehaviorSubject<AboutMeStates>();
   BehaviorSubject<AboutMeStates> get subject => _subject;
 
-  final defaultState = AboutMeLoadingState();
-
   void mapEventToState(AboutMeEvents event) async {
     switch (event) {
       case AboutMeEvents.INITIAL_EVENT:
-        _subject.sink.add(AboutMeLoadingState());
         AboutMeResponse aboutMeResponse = await projectRepo.aboutMe();
         _subject.sink.add(
             AboutMeInitialState(aboutMeModel: aboutMeResponse.aboutMeModel));
         break;
 
       case AboutMeEvents.LOG_OUT_EVENT:
-        _subject.sink.add(AboutMeLoadingState());
         bool res = await projectRepo.logOut();
         if (res) {
           switchScreenBloc.mapEventToState(SwitchScreenEvent.LOGIN_EVENT);

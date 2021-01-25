@@ -39,12 +39,9 @@ class BooksBloc {
   BehaviorSubject<BooksStates> _subject = BehaviorSubject<BooksStates>();
   BehaviorSubject<BooksStates> get subject => _subject;
 
-  BooksStates defaultState = BooksLoadingState();
-
   void mapEventToState(BooksEvents event) async {
     switch (event.runtimeType) {
       case BooksInitialEvent:
-        _subject.sink.add(BooksLoadingState());
         BookResponse bookResponse = await projectRepo.getBooks();
         BookResponse favBooksResponse = await projectRepo.getFavBooks();
         _subject.sink.add(BooksInitialState(
@@ -52,7 +49,6 @@ class BooksBloc {
             favBooks: favBooksResponse.bookModel.data));
         break;
       case BooksAddToFavsEvent:
-        _subject.sink.add(BooksLoadingState());
         BooksAddToFavsEvent addToFavouriteEvent = event;
         FavouriteResponse favouriteResponse =
             await projectRepo.addToFavBooks(addToFavouriteEvent.bookId);

@@ -17,8 +17,6 @@ class AuthorInitialState extends AuthorStates {
   AuthorInitialState({this.bookModel, this.authorModel});
 }
 
-class AuthorLoadingState extends AuthorStates {}
-
 class AuthorErrorState extends AuthorStates {}
 
 //bloc
@@ -29,7 +27,6 @@ class AuthorBloc {
 
   void mapEventToState(AuthorEvents event) async {
     if (event == AuthorEvents.INITIAL_EVENT) {
-      _subject.sink.add(AuthorLoadingState());
       AuthorResponse authorResponse = await projectRepo.getAuthors();
       BookResponse bookResponse = await projectRepo.getBooks();
       if (authorResponse.error == "Error getting authors" || bookResponse.error=="Error getting books") {

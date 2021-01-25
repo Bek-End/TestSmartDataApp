@@ -27,8 +27,6 @@ class AuthorsBooksInitialState extends AuthorsBooksStates {
   AuthorsBooksInitialState({this.book, this.favBooks});
 }
 
-class AuthorsBooksLoadingState extends AuthorsBooksStates {}
-
 class AuthorsBooksAddToFavouriteState extends AuthorsBooksStates {}
 
 class AuthorsBooksErrorState extends AuthorsBooksStates {}
@@ -44,20 +42,16 @@ class AuthorsBooksBloc {
       BehaviorSubject<AuthorsBooksStates>();
   BehaviorSubject<AuthorsBooksStates> get subject => _subject;
 
-  final defaultAuthorsBooksState = AuthorsBooksLoadingState();
-
   void mapEventToState(AuthorsBooksEvents event) async {
     switch (event.runtimeType) {
       case AuthorsBooksInitialEvent:
         AuthorsBooksInitialEvent authorsBooksInitialEvent = event;
-        _subject.sink.add(AuthorsBooksLoadingState());
         BookResponse bookResponse = await projectRepo.getFavBooks();
         _subject.sink.add(AuthorsBooksInitialState(
             book: authorsBooksInitialEvent.book,
             favBooks: bookResponse.bookModel.data));
         break;
       case AuthorsBooksAddToFavouriteEvent:
-        _subject.sink.add(AuthorsBooksLoadingState());
         AuthorsBooksAddToFavouriteEvent addToFavouriteEvent = event;
         FavouriteResponse favouriteResponse = await projectRepo.addToFavBooks(addToFavouriteEvent.bookId);
         if (favouriteResponse.error == "Error adding fav books" ||

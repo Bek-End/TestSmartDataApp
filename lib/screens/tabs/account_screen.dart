@@ -39,86 +39,90 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       body: StreamBuilder(
           stream: aboutMeBloc.subject.stream,
-          initialData: aboutMeBloc.defaultState,
           builder: (context, AsyncSnapshot<AboutMeStates> snapshot) {
-            switch (snapshot.data.runtimeType) {
-              case AboutMeInitialState:
-                AboutMeInitialState aboutMeInitialState = snapshot.data;
-                return SafeArea(
-                    child: Container(
-                        child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
+            if (snapshot.hasData) {
+              switch (snapshot.data.runtimeType) {
+                case AboutMeInitialState:
+                  AboutMeInitialState aboutMeInitialState = snapshot.data;
+                  return SafeArea(
                       child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.only(bottom: 10),
-                        decoration: BoxDecoration(color: Colors.black12),
-                        child: Icon(
-                          EvaIcons.personOutline,
-                          size: 150,
+                          child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.only(bottom: 10),
+                          decoration: BoxDecoration(color: Colors.black12),
+                          child: Icon(
+                            EvaIcons.personOutline,
+                            size: 150,
+                          ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                aboutMeInitialState.aboutMeModel.data.name,
-                                style: TextStyle(
-                                    fontSize: 40, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(aboutMeInitialState.aboutMeModel.data.email)
-                            ],
-                          )),
-                    ),
-                    Expanded(
-                        child: Center(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Log out",
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              EvaIcons.logOutOutline,
-                              color: Colors.orange,
-                              size: 40,
-                            ),
-                            onPressed: () => aboutMeBloc
-                                .mapEventToState(AboutMeEvents.LOG_OUT_EVENT),
-                          ),
-                        ],
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  aboutMeInitialState.aboutMeModel.data.name,
+                                  style: TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                    aboutMeInitialState.aboutMeModel.data.email)
+                              ],
+                            )),
                       ),
-                    ))
-                  ],
-                )));
-              case AboutMeLoadingState:
-                return Center(
-                  child: buildLoadingWidget(),
-                );
-              case AboutMeErrorState:
-                return Center(
-                  child: Text("Error"),
-                );
+                      Expanded(
+                          child: Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Log out",
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                EvaIcons.logOutOutline,
+                                color: Colors.orange,
+                                size: 40,
+                              ),
+                              onPressed: () => aboutMeBloc
+                                  .mapEventToState(AboutMeEvents.LOG_OUT_EVENT),
+                            ),
+                          ],
+                        ),
+                      ))
+                    ],
+                  )));
+                case AboutMeErrorState:
+                  return Center(
+                    child: Text("Error"),
+                  );
+              }
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text("Error"),
+              );
+            } else {
+              return Center(
+                child: buildLoadingWidget(),
+              );
             }
-            return Center(
-              child: Text("Account Screen"),
-            );
           }),
     );
   }
